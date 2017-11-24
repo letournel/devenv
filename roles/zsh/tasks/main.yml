@@ -1,0 +1,54 @@
+---
+
+- name: install
+  apt:
+    name: zsh
+    state: present
+
+- name: cloning oh my zsh
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: ~/.oh-my-zsh
+  become: true
+  become_user: "letournel"
+
+- name: creating new ~/.zshrc
+  copy:
+    src: "/home/letournel/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest: ~/.zshrc
+  become: true
+  become_user: "letournel"
+
+- name: add autosuggestion plugin
+  git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+    dest: /home/letournel/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+  become: true
+  become_user: "letournel"
+
+- name: configure plugins to use
+  blockinfile:
+    path: ~/.zshrc
+    insertafter: 'plugins=\('
+    block: |
+      {{ item }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ item }}"
+  with_items:
+    - 'autojump'
+    - 'composer'
+    - 'jsontools'
+    - 'zsh-autosuggestions'
+  become: true
+  become_user: "letournel"
+
+- name: configure zsh theme in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    line: "{{ item }}"
+    insertafter: "source $ZSH/oh-my-zsh.sh"
+    state: present
+  with_items:
+    - 'if [ -f "${HOME}/.bash_aliases" ]; then source "${HOME}/.bash_aliases"; fi'
+    - 'if [ -f "${HOME}/.bash_functions" ]; then source "${HOME}/.bash_functions"; fi'
+  become: true
+  become_user: "letournel"

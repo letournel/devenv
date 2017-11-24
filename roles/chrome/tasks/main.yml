@@ -1,0 +1,12 @@
+---
+
+- name: check if installed
+  command: dpkg-query -s google-chrome-stable
+  register: dpkg_check
+  failed_when: dpkg_check.rc > 1
+
+- name: install
+  apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    state: present
+  when: dpkg_check.rc == 1

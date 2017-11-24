@@ -1,0 +1,13 @@
+---
+- name: deploy dev stack
+  hosts: localhost
+  connection: local
+  become: yes
+  roles:
+    - atom
+    - chrome
+    - zsh
+    - powerlevel9k
+    - docker
+  vars:
+    font_path: "/usr/share/fonts/X11/misc" #needed for powerfont installation. $(xset q) to retrieve a valid font path

@@ -1,0 +1,42 @@
+---
+
+- name: install powerlevel9k theme for zsh
+  git:
+    repo: https://github.com/bhilburn/powerlevel9k.git
+    dest: ~/.oh-my-zsh/custom/themes/powerlevel9k
+  become: true
+  become_user: "letournel"
+
+- name: configure zsh theme in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'ZSH_THEME="robbyrussell"', line: 'ZSH_THEME="powerlevel9k/powerlevel9k"'}
+  become: true
+  become_user: "letournel"
+
+- name: download powerline font
+  get_url:
+    url: https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
+    dest: "{{ font_path }}"
+
+- name: update font cache
+  command: fc-cache -vf {{ font_path }}
+  become: true
+  become_user: "letournel"
+
+- name: ensure fontconfig folder exists
+  file:
+    path: ~/.config/fontconfig/conf.d/
+    state: directory
+  become: true
+  become_user: "letournel"
+
+- name: install fontconfig file
+  get_url:
+    url: https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
+    dest: ~/.config/fontconfig/conf.d/
+  become: true
+  become_user: "letournel"

@@ -1,0 +1,42 @@
+---
+
+- name: install utils
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+
+- name: add apt key
+  apt_key:
+    url: 'https://download.docker.com/linux/debian/gpg'
+    state: present
+
+- name: add apt repository
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable'
+    state: present
+
+- name: install
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - docker-ce
+
+- name: install utils
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - docker-compose
+
+- name: ensure service started
+  service:
+    name: docker
+    state: started
+    enabled: yes
