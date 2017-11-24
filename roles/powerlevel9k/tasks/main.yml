@@ -13,7 +13,7 @@
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
-    - { regexp: 'ZSH_THEME="robbyrussell"', line: 'ZSH_THEME="powerlevel9k/powerlevel9k"'}
+    - { regexp: '^ZSH_THEME=', line: 'ZSH_THEME="powerlevel9k/powerlevel9k"'}
   become: true
   become_user: "letournel"
 

@@ -16,6 +16,7 @@
   copy:
     src: "/home/letournel/.oh-my-zsh/templates/zshrc.zsh-template"
     dest: ~/.zshrc
+    force: no
   become: true
   become_user: "letournel"
 

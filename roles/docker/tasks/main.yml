@@ -28,6 +28,12 @@
   with_items:
     - docker-ce
 
+- name: configure
+  template:
+    src: daemon.json.j2
+    dest: '/etc/docker/daemon.json'
+    mode: 0644
+
 - name: install utils
   apt:
     name: '{{ item }}'
