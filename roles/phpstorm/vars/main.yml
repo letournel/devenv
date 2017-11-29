@@ -1,0 +1,6 @@
+---
+
+phpstorm_version: 2017.2.4
+phpstorm_bin: /usr/local/bin/phpstorm
+phpstorm_dir: "/opt/phpstorm-{{ phpstorm_version }}"
+phpstorm_archive: "{{ phpstorm_dir }}.tar.gz"

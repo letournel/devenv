@@ -1,0 +1,35 @@
+---
+
+- name: check if installed
+  stat:
+    path: "{{ phpstorm_dir }}"
+  register: phpstorm_exist
+
+- name: download phpstorm archive
+  get_url:
+    url: https://download-cf.jetbrains.com/webide/PhpStorm-{{ phpstorm_version }}.tar.gz
+    dest: "{{ phpstorm_archive }}"
+  when: phpstorm_exist.stat.exists == False
+
+- name: decompress phpstorm archive
+  unarchive:
+    src: "{{ phpstorm_archive }}"
+    dest: /opt
+    copy: no
+  when: phpstorm_exist.stat.exists == False
+
+- name: move phpstorm folder
+  shell: mv /opt/PhpStorm-* {{ phpstorm_dir }}
+  when: phpstorm_exist.stat.exists == False
+
+- name: remove phpstorm archive
+  file:
+    path: "{{ phpstorm_archive }}"
+    state: absent
+  when: phpstorm_exist.stat.exists == False
+
+- name: create symlink
+  file:
+    src: "{{ phpstorm_dir }}/bin/phpstorm.sh"
+    dest: "{{ phpstorm_bin }}"
+    state: link
