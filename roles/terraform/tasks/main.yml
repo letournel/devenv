@@ -1,0 +1,38 @@
+---
+
+- name: check if installed
+  stat:
+    path: "{{ terraform_bin }}"
+  register: terraform_exist
+
+- name: download terraform archive
+  get_url:
+    url: "{{ terraform_url }}"
+    dest: "{{ terraform_archive }}"
+  when: terraform_exist.stat.exists == False
+
+- name: create terraform unarchive directory
+  file:
+    path: "{{ terraform_unarchive }}"
+    state: directory
+  when: terraform_exist.stat.exists == False
+
+- name: decompress terraform archive
+  unarchive:
+    src: "{{ terraform_archive }}"
+    dest: "{{ terraform_unarchive }}"
+    copy: no
+  when: terraform_exist.stat.exists == False
+
+- name: move terraform bin
+  shell: mv {{ terraform_unarchive }}/terraform {{ terraform_bin }}
+  when: terraform_exist.stat.exists == False
+
+- name: remove terraform archive
+  file:
+    path: "{{ item }}"
+    state: absent
+  when: terraform_exist.stat.exists == False
+  with_items:
+    - "{{ terraform_archive }}"
+    - "{{ terraform_unarchive }}"

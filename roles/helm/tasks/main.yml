@@ -1,0 +1,38 @@
+---
+
+- name: check if installed
+  stat:
+    path: "{{ helm_bin }}"
+  register: helm_exist
+
+- name: download helm archive
+  get_url:
+    url: "{{ helm_url }}"
+    dest: "{{ helm_archive }}"
+  when: helm_exist.stat.exists == False
+
+- name: create helm unarchive directory
+  file:
+    path: "{{ helm_unarchive }}"
+    state: directory
+  when: helm_exist.stat.exists == False
+
+- name: decompress helm archive
+  unarchive:
+    src: "{{ helm_archive }}"
+    dest: "{{ helm_unarchive }}"
+    copy: no
+  when: helm_exist.stat.exists == False
+
+- name: move helm bin
+  shell: mv {{ helm_unarchive }}/linux-amd64/helm {{ helm_bin }}
+  when: helm_exist.stat.exists == False
+
+- name: remove helm archive
+  file:
+    path: "{{ item }}"
+    state: absent
+  when: helm_exist.stat.exists == False
+  with_items:
+    - "{{ helm_archive }}"
+    - "{{ helm_unarchive }}"
